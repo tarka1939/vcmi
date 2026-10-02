@@ -49,6 +49,10 @@ public:
 	std::vector<CreatureID> providedCreatures() const override;
 	AnimationPath getKingdomOverviewImage() const;
 
+	/// Returns true if player can recruit creature from this dwelling without visiting it, into garrison of an owned town
+	/// Destination must be either an owned town without garrisoned hero, or a hero garrisoned in an owned town
+	bool canRecruitRemotely(PlayerColor player, const CArmedInstance * destination, CreatureID creature) const;
+
 protected:
 	void serializeJsonOptions(JsonSerializeFormat & handler) override;
 

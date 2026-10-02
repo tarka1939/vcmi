@@ -595,6 +595,28 @@ AnimationPath CGDwelling::getKingdomOverviewImage() const
 	return ourHandler ? ourHandler->getKingdomOverviewImage() : AnimationPath{};
 }
 
+bool CGDwelling::canRecruitRemotely(PlayerColor player, const CArmedInstance * destination, CreatureID creature) const
+{
+	if(!cb->getSettings().getBoolean(EGameSettings::DWELLINGS_ALLOW_REMOTE_RECRUITMENT))
+		return false;
+
+	// towns have their own recruitment rules; dwellings that are never flagged (e.g. Refugee Camp) are not owned by anyone
+	if(dynamic_cast<const CGTownInstance *>(this) || getOwner() != player)
+		return false;
+
+	// war machines are given to a hero, so they still require a hero visiting the dwelling
+	if(!destination || creature.toCreature()->warMachine != ArtifactID::NONE)
+		return false;
+
+	const auto * hero = dynamic_cast<const CGHeroInstance *>(destination);
+	const auto * town = hero ? hero->getVisitedTown() : dynamic_cast<const CGTownInstance *>(destination);
+	if(!town || town->getOwner() != player)
+		return false;
+
+	// creatures always go to the garrison: garrisoned hero if present, otherwise the town itself
+	return hero ? hero->isGarrisoned() : town->getUpperArmy() == destination;
+}
+
 std::vector<CreatureID> CGDwelling::providedCreatures() const
 {
 	if (ID == Obj::WAR_MACHINE_FACTORY || ID == Obj::REFUGEE_CAMP)
