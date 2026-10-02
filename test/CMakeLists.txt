@@ -37,6 +37,7 @@ set(test_SRCS
 
 		game/CGameStateTest.cpp
 		game/HeroRecruitmentTest.cpp
+		game/RemoteRecruitmentTest.cpp
 
 		json/JsonTests.cpp
 
