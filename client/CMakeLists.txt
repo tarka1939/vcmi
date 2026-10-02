@@ -194,6 +194,7 @@ set(vcmiclientcommon_SRCS
 	windows/GUIClasses.cpp
 	windows/InfoWindows.cpp
 	windows/QuickRecruitmentWindow.cpp
+	windows/RemoteDwellingsWindow.cpp
 	windows/CHeroBackpackWindow.cpp
 	windows/CWindowWithArtifacts.cpp
 	windows/settings/GeneralOptionsTab.cpp
@@ -441,6 +442,7 @@ set(vcmiclientcommon_HEADERS
 	windows/GUIClasses.h
 	windows/InfoWindows.h
 	windows/QuickRecruitmentWindow.h
+	windows/RemoteDwellingsWindow.h
 	windows/CHeroBackpackWindow.h
 	windows/CWindowWithArtifacts.h
 	windows/settings/GeneralOptionsTab.h

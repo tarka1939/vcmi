@@ -240,6 +240,7 @@ class CCastleInterface final : public CStatusbarWindow, public IGarrisonHolder, 
 	std::shared_ptr<CButton> exit;
 	std::shared_ptr<CButton> fastTownHall;
 	std::shared_ptr<CButton> fastArmyPurchase;
+	std::shared_ptr<CButton> remoteDwellings;
 	std::shared_ptr<LRClickableArea> fastMarket;
 	std::shared_ptr<LRClickableArea> fastWiki;
 

@@ -239,7 +239,7 @@ void CRecruitmentWindow::buy()
 		else
 		{
 			std::string txt;
-			if(dwelling->ID != Obj::TOWN)
+			if(dwelling->ID != Obj::TOWN && dst->ID != Obj::TOWN)
 			{
 				txt = LIBRARY->generaltexth->allTexts[425]; //The %s would join your hero, but there aren't enough provisions to support them.
 				boost::algorithm::replace_first(txt, "%s", slider->getValue() > 1 ? LIBRARY->creh->objects[crid]->getNamePluralTranslated() : LIBRARY->creh->objects[crid]->getNameSingularTranslated());

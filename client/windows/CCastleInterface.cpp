@@ -15,6 +15,7 @@
 #include "InfoWindows.h"
 #include "GUIClasses.h"
 #include "QuickRecruitmentWindow.h"
+#include "RemoteDwellingsWindow.h"
 #include "CCreatureWindow.h"
 
 #include "../CPlayerInterface.h"
@@ -1673,6 +1674,16 @@ void CCastleInterface::recreateIcons()
 
 	for(size_t i=0; i<4; i++)
 		creainfo.push_back(std::make_shared<CCreaInfo>(Point(14 + 55 * (int)i, 507), town, (int)i + 4, compactCreatureInfo, useAvailableCreaturesForLabel));
+
+	remoteDwellings.reset();
+	if(GAME->interface()->cb->getSettings().getBoolean(EGameSettings::DWELLINGS_ALLOW_REMOTE_RECRUITMENT) && town->getOwner() == GAME->interface()->playerID)
+	{
+		// placed into 8th creature box if town has no 8th creature level, otherwise into the gap between hero portraits
+		bool lastCreatureBoxFree = town->creatures.size() < 8 || town->creatures[7].second.empty();
+		Point position = lastCreatureBoxFree ? Point(14 + 55 * 3 + 8, 507) : Point(254, 451);
+		remoteDwellings = std::make_shared<CButton>(position, AnimationPath::builtin("IAM002.DEF"), CButton::tooltipLocalized("vcmi.townWindow.remoteDwellings"), [this](){ ENGINE->windows().createAndPushWindow<RemoteDwellingsWindow>(town); });
+		remoteDwellings->setPlayerColor(town->getOwner());
+	}
 }
 
 void CCastleInterface::keyPressed(EShortcut key)
