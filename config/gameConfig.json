@@ -722,7 +722,9 @@
 			// if enabled, dwellings owned by players will accumulate creatures 
 			"accumulateWhenOwned" : false,
 			// if enabled, game will attempt to merge slots in army on recruit if all slots in hero army are in use
-			"mergeOnRecruit" : true
+			"mergeOnRecruit" : true,
+			// if enabled, players can recruit from owned non-town dwellings without a visiting hero, from town screen into town garrison
+			"allowRemoteRecruitment" : true
 		},
 		
 		"mapObjects" : 

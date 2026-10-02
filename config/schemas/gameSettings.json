@@ -139,7 +139,8 @@
 			"properties" : {
 				"accumulateWhenNeutral" :  { "type" : "boolean" },
 				"accumulateWhenOwned" :  { "type" : "boolean" },
-				"mergeOnRecruit" :  { "type" : "boolean" }
+				"mergeOnRecruit" :  { "type" : "boolean" },
+				"allowRemoteRecruitment" :  { "type" : "boolean" }
 			}
 		},
 		"markets": {
