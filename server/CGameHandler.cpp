@@ -2414,6 +2414,8 @@ bool CGameHandler::recruitCreatures(ObjectInstanceID objid, ObjectInstanceID dst
 	const auto * c = crid.toCreature();
 
 	const bool warMachine = c->warMachine != ArtifactID::NONE;
+	// recruiting into garrison of an owned town does not need a visiting hero
+	const bool remote = dwelling && army && dwelling->canRecruitRemotely(player, army, crid);
 
 	//TODO: check if hero is actually visiting object
 
@@ -2425,7 +2427,7 @@ bool CGameHandler::recruitCreatures(ObjectInstanceID objid, ObjectInstanceID dst
 		COMPLAIN_RET_FALSE_IF(town != army && !hero, "Cannot recruit: invalid destination!");
 		COMPLAIN_RET_FALSE_IF(hero != town->getGarrisonHero() && hero != town->getVisitingHero(), "Cannot recruit: can only recruit to town or hero in town!!");
 	}
-	else if (!dwelling->canRecruitRemotely(player, army, crid)) // recruiting into garrison of an owned town does not need a visiting hero
+	else if (!remote)
 	{
 		COMPLAIN_RET_FALSE_IF(getVisitingHero(dwelling) != hero, "Cannot recruit: can only recruit by visiting hero!");
 		COMPLAIN_RET_FALSE_IF(!hero || hero->getOwner() != player, "Cannot recruit: can only recruit to owned hero!");
@@ -2453,9 +2455,11 @@ bool CGameHandler::recruitCreatures(ObjectInstanceID objid, ObjectInstanceID dst
 		}
 	}
 	SlotID slot = army->getSlotFor(crid);
+	// same as for a visiting hero, see CGDwelling::heroAcceptsCreatures
+	const bool forFree = remote && level == 0 && dwelling->creaturesJoinForFree();
 
 	if((!found && complain("Cannot recruit: no such creatures!"))
-		|| (cram > LIBRARY->creh->objects.at(crid)->maxAmount(gameInfo().getPlayerState(army->tempOwner)->resources) && complain("Cannot recruit: lack of resources!"))
+		|| (!forFree && cram > LIBRARY->creh->objects.at(crid)->maxAmount(gameInfo().getPlayerState(army->tempOwner)->resources) && complain("Cannot recruit: lack of resources!"))
 		|| (cram <= 0 && complain("Cannot recruit: cram <= 0!"))
 		|| (!slot.validSlot() && !warMachine && complain("Cannot recruit: no available slot!")))
 	{
@@ -2463,9 +2467,12 @@ bool CGameHandler::recruitCreatures(ObjectInstanceID objid, ObjectInstanceID dst
 	}
 
 	//recruit
-	TResources cost = (c->getFullRecruitCost() * cram);
-	giveResources(army->tempOwner, -cost);
-	statistics->getPlayerAccumulator(army->tempOwner).spentResourcesForArmy += cost;
+	if (!forFree)
+	{
+		TResources cost = (c->getFullRecruitCost() * cram);
+		giveResources(army->tempOwner, -cost);
+		statistics->getPlayerAccumulator(army->tempOwner).spentResourcesForArmy += cost;
+	}
 
 	SetAvailableCreatures sac;
 	sac.tid = objid;

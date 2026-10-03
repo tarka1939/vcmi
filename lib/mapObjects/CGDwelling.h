@@ -52,6 +52,8 @@ public:
 	/// Returns true if player can recruit creature from this dwelling without visiting it, into garrison of an owned town
 	/// Destination must be either an owned town without garrisoned hero, or a hero garrisoned in an owned town
 	bool canRecruitRemotely(PlayerColor player, const CArmedInstance * destination, CreatureID creature) const;
+	/// Returns true if creatures of the first dwelling level join for free instead of being recruited, e.g. first level creatures
+	bool creaturesJoinForFree() const;
 
 protected:
 	void serializeJsonOptions(JsonSerializeFormat & handler) override;

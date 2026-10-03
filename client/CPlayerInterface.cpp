@@ -64,6 +64,7 @@
 #include "windows/CSpellWindow.h"
 #include "windows/CTutorialWindow.h"
 #include "windows/GUIClasses.h"
+#include "windows/RemoteDwellingsWindow.h"
 #include "windows/InfoWindows.h"
 #include "windows/settings/SettingsMainWindow.h"
 
@@ -1236,6 +1237,9 @@ void CPlayerInterface::availableCreaturesChanged( const CGDwelling *town )
 		for (auto crw : ENGINE->windows().findWindows<CRecruitmentWindow>())
 			if (crw->dwelling == town)
 				crw->availableCreaturesChanged();
+
+		for (auto rdw : ENGINE->windows().findWindows<RemoteDwellingsWindow>())
+			rdw->updateEntries();
 	}
 }
 

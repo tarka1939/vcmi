@@ -64,10 +64,12 @@ class RemoteDwellingsWindow : public CWindowObject
 
 	/// returns indexes of dwelling levels that can be recruited from into this town, see CGDwelling::canRecruitRemotely
 	std::vector<size_t> getRecruitableLevels(const CGDwelling * dwelling) const;
-	void updateEntries();
 	std::shared_ptr<CIntObject> createItem(size_t index);
 	void openRecruitment(const CGDwelling * dwelling);
 
 public:
 	explicit RemoteDwellingsWindow(const CGTownInstance * town);
+
+	/// rebuilds the list, e.g. after server changed amount of available creatures
+	void updateEntries();
 };

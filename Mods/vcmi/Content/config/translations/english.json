@@ -1121,7 +1121,7 @@
 	"vcmi.townWindow.remoteDwellings.title": "External Dwellings",
 	"vcmi.townWindow.remoteDwellings.empty": "You do not own any dwellings outside of towns.",
 	"vcmi.townWindow.remoteDwellings.hover": "External Dwellings",
-	"vcmi.townWindow.remoteDwellings.help": "{External Dwellings}\n\nRecruit creatures from dwellings you own into the garrison of this town, at their normal price.",
+	"vcmi.townWindow.remoteDwellings.help": "{External Dwellings}\n\nRecruit creatures from dwellings you own into the garrison of this town. Prices are the same as when visiting with a hero, so first level creatures join for free.",
 	"vcmi.tutorialWindow.decription.AbortSpell": "Touch and hold to cancel a spell.",
 	"vcmi.tutorialWindow.decription.BattleDirection": "To attack from a particular direction, swipe in the direction from which the attack is to be made.",
 	"vcmi.tutorialWindow.decription.BattleDirectionAbort": "The attack direction gesture can be cancelled if the finger is far enough away.",

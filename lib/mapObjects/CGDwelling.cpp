@@ -442,7 +442,7 @@ void CGDwelling::heroAcceptsCreatures(IGameEventCallback & gameEvents, const CGH
 	auto *crs = crid.toCreature();
 	TQuantity count = creatures[0].first;
 
-	if(crs->getLevel() == 1  &&  ID != Obj::REFUGEE_CAMP) //first level - creatures are for free
+	if(creaturesJoinForFree()) //first level - creatures are for free
 	{
 		if(count) //there are available creatures
 		{
@@ -615,6 +615,13 @@ bool CGDwelling::canRecruitRemotely(PlayerColor player, const CArmedInstance * d
 
 	// creatures always go to the garrison: garrisoned hero if present, otherwise the town itself
 	return hero ? hero->isGarrisoned() : town->getUpperArmy() == destination;
+}
+
+bool CGDwelling::creaturesJoinForFree() const
+{
+	if(ID == Obj::REFUGEE_CAMP || creatures.empty() || creatures[0].second.empty())
+		return false;
+	return creatures[0].second[0].toCreature()->getLevel() == 1;
 }
 
 std::vector<CreatureID> CGDwelling::providedCreatures() const

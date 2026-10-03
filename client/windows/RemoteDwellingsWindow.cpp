@@ -19,6 +19,7 @@
 #include "../gui/WindowHandler.h"
 #include "../media/ISoundPlayer.h"
 #include "../widgets/Buttons.h"
+#include "../widgets/CComponent.h"
 #include "../widgets/GraphicalPrimitiveCanvas.h"
 #include "../widgets/Images.h"
 #include "../widgets/ObjectLists.h"
@@ -30,6 +31,7 @@
 #include "../../lib/callback/CCallback.h"
 #include "../../lib/mapObjects/CGTownInstance.h"
 #include "../../lib/texts/CGeneralTextHandler.h"
+#include "../../lib/texts/MetaString.h"
 
 namespace
 {
@@ -172,6 +174,29 @@ std::shared_ptr<CIntObject> RemoteDwellingsWindow::createItem(size_t index)
 void RemoteDwellingsWindow::openRecruitment(const CGDwelling * dwelling)
 {
 	const CArmedInstance * dst = town->getUpperArmy();
+
+	if(dwelling->creaturesJoinForFree())
+	{
+		// like for a hero visiting the dwelling, all creatures join for free without the recruitment window
+		const CreatureID creature = dwelling->creatures[0].second[0];
+		const int amount = static_cast<int>(dwelling->creatures[0].first);
+		if(!dst->getSlotFor(creature).validSlot())
+		{
+			GAME->interface()->showInfoDialog(LIBRARY->generaltexth->allTexts[17]); //There is no room in the garrison for this army.
+			return;
+		}
+
+		MetaString text = MetaString::createFromTextID("core.advevent.35"); //{%s} Would you like to recruit %s?
+		text.replaceRawString(dwelling->getObjectName());
+		text.replaceNamePlural(creature);
+		auto joinCb = [dwelling, dst, creature, amount]()
+		{
+			GAME->interface()->cb->recruitCreatures(dwelling, dst, creature, amount, 0);
+		};
+		GAME->interface()->showYesNoDialog(text.toString(), joinCb, nullptr, {std::make_shared<CComponent>(ComponentType::CREATURE, creature, amount)});
+		return;
+	}
+
 	// same level selection as for a hero visiting the dwelling, see CGDwelling::heroAcceptsCreatures
 	const int level = dwelling->ID == Obj::CREATURE_GENERATOR1 ? 0 : -1;
 
@@ -179,10 +204,6 @@ void RemoteDwellingsWindow::openRecruitment(const CGDwelling * dwelling)
 	{
 		GAME->interface()->cb->recruitCreatures(dwelling, dst, id, count, -1);
 	};
-	// no selectionMade here: there is no server query to answer, only refresh the available amounts
-	auto closeCb = [this]()
-	{
-		updateEntries();
-	};
-	ENGINE->windows().createAndPushWindow<CRecruitmentWindow>(dwelling, level, dst, recruitCb, closeCb);
+	// no selectionMade on close: there is no server query to answer, and the list is refreshed by CPlayerInterface::availableCreaturesChanged
+	ENGINE->windows().createAndPushWindow<CRecruitmentWindow>(dwelling, level, dst, recruitCb, nullptr);
 }

@@ -32,13 +32,14 @@ public:
 	}
 };
 
-/// Covers validation used by CGameHandler::recruitCreatures for recruiting without a visiting hero
+/// Covers validation and pricing used by CGameHandler::recruitCreatures for recruiting without a visiting hero
 class RemoteRecruitmentTest : public Test
 {
 public:
 	const PlayerColor player = PlayerColor(0);
 	const PlayerColor enemy = PlayerColor(1);
 	const CreatureID creature = CreatureID::ARCHER;
+	const CreatureID firstLevelCreature = CreatureID(0); // Pikeman
 	const CreatureID warMachine = CreatureID::BALLISTA;
 
 	NiceMock<RemoteRecruitmentCallbackMock> cb;
@@ -137,6 +138,33 @@ TEST_F(RemoteRecruitmentTest, townAsSourceIsRejected)
 	otherTown->id = ObjectInstanceID(4);
 	otherTown->tempOwner = player;
 	EXPECT_FALSE(otherTown->canRecruitRemotely(player, town.get(), creature));
+}
+
+TEST_F(RemoteRecruitmentTest, firstLevelCreaturesJoinForFree)
+{
+	dwelling->creatures = {{10, {firstLevelCreature}}};
+	EXPECT_TRUE(dwelling->creaturesJoinForFree());
+}
+
+TEST_F(RemoteRecruitmentTest, higherLevelCreaturesDoNotJoinForFree)
+{
+	dwelling->creatures = {{10, {creature}}};
+	EXPECT_FALSE(dwelling->creaturesJoinForFree());
+}
+
+TEST_F(RemoteRecruitmentTest, refugeeCampCreaturesDoNotJoinForFree)
+{
+	dwelling->ID = Obj::REFUGEE_CAMP;
+	dwelling->creatures = {{10, {firstLevelCreature}}};
+	EXPECT_FALSE(dwelling->creaturesJoinForFree());
+}
+
+TEST_F(RemoteRecruitmentTest, emptyDwellingDoesNotJoinForFree)
+{
+	EXPECT_FALSE(dwelling->creaturesJoinForFree());
+
+	dwelling->creatures = {{10, {}}};
+	EXPECT_FALSE(dwelling->creaturesJoinForFree());
 }
 
 }
